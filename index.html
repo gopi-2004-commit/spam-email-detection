@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spam Check — is this email safe?</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <h1>Spam Check</h1>
+      <p class="tagline">Paste an email and see whether it belongs in the inbox or the bin, and why.</p>
+      <nav class="tabs" role="tablist" aria-label="Views">
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="single">One email</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="batch">Many emails</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="model">About the model</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- One email -->
+    <section id="panel-single" class="panel" role="tabpanel">
+      <div class="grid">
+        <form id="email-form" class="letter" novalidate>
+          <div class="field">
+            <label for="subject">Subject</label>
+            <input id="subject" name="subject" type="text" maxlength="500" autocomplete="off" placeholder="e.g. Your account has been suspended">
+          </div>
+          <div class="field">
+            <label for="body">Message</label>
+            <textarea id="body" name="body" rows="11" placeholder="Paste the email text here"></textarea>
+          </div>
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+          <div class="actions">
+            <button type="submit" class="btn primary" id="check-btn">Check email</button>
+            <button type="button" class="btn" id="sample-spam">Load a spam example</button>
+            <button type="button" class="btn" id="sample-ham">Load a normal email</button>
+            <button type="button" class="btn quiet" id="clear-btn">Clear</button>
+          </div>
+        </form>
+
+        <aside class="result" id="result" aria-live="polite">
+          <div class="empty" id="result-empty">
+            <p class="empty-title">No email checked yet</p>
+            <p>Fill in the form and choose Check email. The verdict, the reasons and the words that moved the score will appear here.</p>
+          </div>
+
+          <div id="result-body" hidden>
+            <div class="verdict">
+              <div class="stamp" id="stamp"><span id="stamp-text"></span></div>
+              <div class="verdict-text">
+                <p class="verdict-line" id="verdict-line"></p>
+                <p class="verdict-sub" id="verdict-sub"></p>
+              </div>
+            </div>
+
+            <div class="meter" aria-hidden="true">
+              <div class="meter-track"><div class="meter-fill" id="meter-fill"></div></div>
+              <div class="meter-scale"><span>Safe</span><span>Spam</span></div>
+            </div>
+
+            <h2>Warning signs</h2>
+            <ul class="signals" id="signals"></ul>
+
+            <h2>Words that moved the score</h2>
+            <ul class="words" id="words"></ul>
+            <p class="hint">Red words pushed the score toward spam. Green words pushed it toward safe.</p>
+          </div>
+        </aside>
+      </div>
+
+      <section class="history" id="history-wrap" hidden>
+        <h2>Checked this session</h2>
+        <ul id="history"></ul>
+      </section>
+    </section>
+
+    <!-- Many emails -->
+    <section id="panel-batch" class="panel" role="tabpanel" hidden>
+      <div class="batch-grid">
+        <div class="letter">
+          <div class="field">
+            <label for="batch-input">Emails to check</label>
+            <textarea id="batch-input" rows="14" placeholder="Subject of the first email&#10;Body of the first email&#10;&#10;---&#10;&#10;Subject of the second email&#10;Body of the second email"></textarea>
+            <p class="hint">Separate emails with a line containing only three dashes. The first line of each email is its subject. Up to 100 emails.</p>
+          </div>
+          <p id="batch-error" class="form-error" role="alert" hidden></p>
+          <div class="actions">
+            <button class="btn primary" id="batch-btn">Check all</button>
+            <button class="btn" id="batch-sample">Load examples</button>
+          </div>
+        </div>
+        <div class="result" id="batch-result" aria-live="polite">
+          <div class="empty" id="batch-empty">
+            <p class="empty-title">No results yet</p>
+            <p>Paste several emails to sort them in one go.</p>
+          </div>
+          <div id="batch-body" hidden>
+            <p class="batch-summary" id="batch-summary"></p>
+            <ul class="batch-list" id="batch-list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Model info -->
+    <section id="panel-model" class="panel" role="tabpanel" hidden>
+      <div class="model-grid">
+        <div class="letter">
+          <h2 class="plain">How it decides</h2>
+          <p>The model reads the subject and message, turns the words and two-word phrases into numbers with TF-IDF, and a logistic regression model converts those numbers into a spam probability. A probability of 50% or more is called spam.</p>
+          <p>Separately, simple rules look for warning signs such as shortened links, shouting, pressure phrases and requests to verify an account. These are shown for context and do not change the score.</p>
+          <p class="note" id="model-note"></p>
+        </div>
+        <div class="letter">
+          <h2 class="plain">Test results</h2>
+          <p id="model-meta" class="hint">Loading…</p>
+          <dl class="stats" id="model-stats"></dl>
+          <h2 class="plain">Confusion matrix</h2>
+          <table class="matrix" id="matrix" aria-label="Confusion matrix">
+            <thead><tr><th></th><th scope="col">Predicted safe</th><th scope="col">Predicted spam</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Actually safe</th><td id="m-tn">–</td><td id="m-fp">–</td></tr>
+              <tr><th scope="row">Actually spam</th><td id="m-fn">–</td><td id="m-tp">–</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>Spam Check is a learning project. Treat results as a second opinion, not a guarantee.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

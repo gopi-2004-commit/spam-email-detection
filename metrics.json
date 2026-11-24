@@ -1,0 +1,19 @@
+{
+  "trained_at": "2026-11-24T03:51:07+00:00",
+  "dataset": "emails.csv",
+  "samples": 544,
+  "spam_samples": 258,
+  "ham_samples": 286,
+  "test_samples": 109,
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "confusion_matrix": {
+    "true_negative": 57,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_positive": 52
+  },
+  "algorithm": "TF-IDF (1-2 grams) + Logistic Regression"
+}
